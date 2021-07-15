@@ -1,6 +1,6 @@
 DOCKER_CMD         ?= docker
-BASE ?= camunda/camunda-bpm-platform:tomcat-7.14.0
-CAMUNDA_RELEASE ?= 7.14.x
+BASE ?= camunda/camunda-bpm-platform:tomcat-7.15.0
+CAMUNDA_RELEASE ?= 7.15.0
 DOCKER_REPO ?= some-repo.org 
 DOCKER_ORG ?= witcom
 DOCKER_RELEASE ?= 1.3
@@ -26,9 +26,8 @@ AUTH_KEYCLOAK_RELEASE ?= 1.3
 docker_build: .third-party-libs-$(CAMUNDA_RELEASE).tmp .webapp-libs-$(CAMUNDA_RELEASE).tmp .engine-rest-libs-$(CAMUNDA_RELEASE).tmp
 	$(DOCKER_CMD) build $(DOCKER_BUILD_ARGS) --build-arg CAMUNDA_RELEASE=$(CAMUNDA_RELEASE) --build-arg=BASE=$(BASE) . -t camunda-$(CAMUNDA_RELEASE)-identity-keycloak:$(DOCKER_RELEASE)
 
-docker_tag:
-	$(DOCKER_CMD) tag camunda-$(CAMUNDA_RELEASE)-identity-keycloak:$(DOCKER_RELEASE) $(DOCKER_REPO)/$(DOCKER_ORG)/camunda-$(CAMUNDA_RELEASE)-identity-keycloak:$(DOCKER_RELEASE)
-	$(DOCKER_CMD) tag camunda-$(CAMUNDA_RELEASE)-identity-keycloak:$(DOCKER_RELEASE) $(DOCKER_REPO)/$(DOCKER_ORG)/camunda-$(CAMUNDA_RELEASE)-identity-keycloak:latest
+docker_tag: docker_build
+	$(DOCKER_CMD) tag camunda-$(CAMUNDA_RELEASE)-identity-keycloak:$(DOCKER_RELEASE) $(DOCKER_REPO)/$(DOCKER_ORG):camunda-$(CAMUNDA_RELEASE)-identity-keycloak-$(DOCKER_RELEASE)
 
 clean:
 	rm -rf .third-party-libs-$(CAMUNDA_RELEASE).tmp third-party-libs/$(CAMUNDA_RELEASE)/target

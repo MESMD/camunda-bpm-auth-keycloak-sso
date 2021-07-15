@@ -1,3 +1,37 @@
+# MESMD Fork Notes
+
+## Local Dev
+
+Configure a Keycloak Realm at https://keycloak.mesmd-dev.mes.dhcs.ca.gov/auth named `camunda` and a client identity named 
+
+```
+export KEYCLOAK_URL=https://keycloak.mesmd-dev.mes.dhcs.ca.gov/auth
+export KEYCLOAK_REALM=camunda
+export KEYCLOAK_CLIENT_ID=camunda-identity-service
+export KEYCLOAK_CLIENT_SECRET=<SECRET FROM KEYCLOAK Client Identity>
+docker run -d --rm -p 8080:8080 -e KEYCLOAK_BASE_URL=$KEYCLOAK_URL -e KEYCLOAK_REALM=$KEYCLOAK_REALM -e KEYCLOAK_CLIENT_ID=$KEYCLOAK_CLIENT_ID -e KEYCLOAK_CLIENT_SECRET=$KEYCLOAK_CLIENT_SECRET camunda-7.14.x-identity-keycloak:1.0.0
+
+```
+
+## MESMD Docker Image Build
+
+```
+export CAMUNDA_RELEASE=7.15.0
+export AWS_ECR_URN=927256257993.dkr.ecr.us-west-2.amazonaws.com
+export DOCKER_ORG=mesmd-camunda
+export IDENTITY_KEYCLOAK_RELEASE=2.1.0
+
+# must match [<version>1.3</version>](https://github.com/MESMD/camunda-bpm-auth-keycloak-sso/blob/df4e6669e68347961d6908debbaf8d6ce7b06db6/pom.xml#L10-L11)
+export AUTH_KEYCLOAK_RELEASE=1.4
+
+
+mvn install
+cd ./docker
+make -e BASE=camunda/camunda-bpm-platform:tomcat-$CAMUNDA_RELEASE -e DOCKER_REPO=$AWS_ECR_URN -e DOCKER_ORG=$DOCKER_ORG -e DOCKER_RELEASE=$CAMUNDA_RELEASE AUTH_KEYCLOAK_RELEASE=$AUTH_KEYCLOAK_RELEASE
+``` 
+
+
+
 # Camunda SSO for WebApps / REST-API
 Enables SSO to Web-Apps / REST-API. Uses https://github.com/camunda/camunda-bpm-identity-keycloak as Identity-Provider, so there is no need to configure groups in Camunda
 
